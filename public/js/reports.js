@@ -60,20 +60,80 @@ function fillDates(rows, days) {
   return result;
 }
 
-// ── Trend chart (Chart.js) ────────────────────────────────────────────────────
+// ── Trend / Today chart (Chart.js) ───────────────────────────────────────────
 async function loadTrend() {
+  if (trendChart) trendChart.destroy();
+
+  if (activeDays === 1) {
+    await loadTodayByHour();
+  } else {
+    await loadScansOverTime();
+  }
+}
+
+async function loadTodayByHour() {
+  document.getElementById('trendTitle').textContent = 'Scans by Hour — Today';
+
+  const res  = await fetch(`/api/reports/heatmap?days=1`);
+  const raw  = await res.json();
+
+  // Aggregate across any day dimension, bucket by hour
+  const hourCounts = Array.from({ length: 24 }, (_, h) => ({
+    hour: h,
+    count: raw.filter(d => d.hour === h).reduce((s, d) => s + d.count, 0)
+  }));
+
+  const labels = hourCounts.map(d => hourLabel(d.hour));
+  const counts = hourCounts.map(d => d.count);
+  const colors = hourCounts.map(d =>
+    (d.hour >= 22 || d.hour < 6) ? 'rgba(59,130,246,0.75)'
+    : d.hour < 14                ? 'rgba(5,150,105,0.75)'
+                                 : 'rgba(245,158,11,0.75)'
+  );
+
+  trendChart = new Chart(document.getElementById('trendChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Scans',
+        data: counts,
+        backgroundColor: colors,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: items => `${labels[items[0].dataIndex]}`,
+            label: item => ` ${item.raw} scan${item.raw !== 1 ? 's' : ''}`,
+          }
+        }
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
+        x: { grid: { display: false }, ticks: { maxTicksLimit: 12 } }
+      }
+    }
+  });
+}
+
+async function loadScansOverTime() {
+  document.getElementById('trendTitle').textContent = 'Scans Over Time';
+
   const res  = await fetch(`/api/reports/trend?days=${activeDays}`);
   const raw  = await res.json();
   const data = fillDates(raw, activeDays);
 
   const labels = data.map(d => {
     const dt = new Date(d.date + 'T12:00:00');
-    return activeDays === 1
-      ? 'Today'
-      : dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   });
 
-  if (trendChart) trendChart.destroy();
   trendChart = new Chart(document.getElementById('trendChart'), {
     type: 'line',
     data: {
