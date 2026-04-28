@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — HygieneTrack</title>
+  <link rel="stylesheet" href="/style.css">
+  <script>if (localStorage.getItem('theme') === 'dark') document.documentElement.setAttribute('data-theme','dark');</script>
+</head>
+<body>
+  <div class="admin-header">
+    <span class="admin-brand">🏥 HygieneTrack</span>
+    <nav class="admin-nav">
+      <a href="/admin.html" class="admin-nav-link">Dashboard</a>
+      <a href="/reports.html" class="admin-nav-link">Reports</a>
+      <a href="/settings.html" class="admin-nav-link admin-nav-link--active">⚙ Settings</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">🌙</button>
+    </nav>
+  </div>
+
+  <div class="settings-page">
+    <div class="settings-card">
+      <div class="settings-card-header">
+        <h2>Compliance</h2>
+        <p>Configure the targets used to calculate compliance rates in reports.</p>
+      </div>
+      <div class="settings-field">
+        <label for="dailyTarget">Target washes per person per day</label>
+        <div class="settings-input-row">
+          <input type="number" id="dailyTarget" min="1" max="100" placeholder="8">
+          <span class="settings-unit">washes / day</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-actions">
+      <button id="saveBtn">Save Changes</button>
+      <span class="save-status" id="saveStatus"></span>
+    </div>
+  </div>
+
+  <script src="/js/settings.js" defer></script>
+</body>
+</html>

@@ -1,32 +1,3 @@
-// ── Settings modal ───────────────────────────────────────────────────────────
-async function openSettings() {
-  const res = await fetch('/api/settings');
-  const settings = await res.json();
-  document.getElementById('dailyTargetInput').value = settings.daily_target;
-  document.getElementById('settingsModal').classList.add('open');
-}
-
-function closeSettings() {
-  document.getElementById('settingsModal').classList.remove('open');
-}
-
-document.getElementById('settingsBtn').addEventListener('click', openSettings);
-document.getElementById('cancelSettings').addEventListener('click', closeSettings);
-document.getElementById('settingsModal').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeSettings();
-});
-
-document.getElementById('saveSettings').addEventListener('click', async () => {
-  const val = parseInt(document.getElementById('dailyTargetInput').value);
-  if (!val || val < 1) return;
-  await fetch('/api/settings', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ daily_target: val })
-  });
-  closeSettings();
-});
-
 // ── Dark mode ────────────────────────────────────────────────────────────────
 const themeToggle = document.getElementById('themeToggle');
 

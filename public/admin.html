@@ -9,27 +9,13 @@
 </head>
 <body>
   <div class="admin-header">
-    <h1>🏥 HygieneTrack Dashboard</h1>
-    <div class="actions">
-      <a href="/reports.html">Reports</a>
-      <a href="/qr-generator">+ Generate QR</a>
-      <button class="theme-toggle" id="settingsBtn" title="Settings">⚙️</button>
+    <span class="admin-brand">🏥 HygieneTrack</span>
+    <nav class="admin-nav">
+      <a href="/admin.html" class="admin-nav-link admin-nav-link--active">Dashboard</a>
+      <a href="/reports.html" class="admin-nav-link">Reports</a>
+      <a href="/settings.html" class="admin-nav-link">⚙ Settings</a>
       <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">🌙</button>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="settingsModal">
-    <div class="modal">
-      <h2>Settings</h2>
-      <label class="modal-label">
-        Target washes per person per day
-        <input type="number" id="dailyTargetInput" min="1" max="100" value="8">
-      </label>
-      <div class="modal-actions">
-        <button class="secondary" type="button" id="cancelSettings">Cancel</button>
-        <button type="button" id="saveSettings">Save</button>
-      </div>
-    </div>
+    </nav>
   </div>
 
   <div class="stats-row">

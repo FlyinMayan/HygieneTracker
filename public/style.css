@@ -232,35 +232,51 @@ button.secondary:hover { background: var(--bg); }
 
 .nav-link:hover { color: var(--text); }
 
-/* ── Admin dashboard ── */
+/* ── Admin header & nav ── */
 .admin-header {
   width: 100%;
-  max-width: 900px;
+  max-width: 960px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
   gap: 12px;
 }
 
-.admin-header h1 {
-  font-size: 1.4rem;
+.admin-brand {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
 }
 
-.admin-header .actions {
+.admin-nav {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 4px;
 }
 
-.admin-header .actions a {
+.admin-nav-link {
   text-decoration: none;
-  padding: 8px 16px;
+  padding: 7px 14px;
   border-radius: 8px;
   font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: background 0.15s, color 0.15s;
+}
+
+.admin-nav-link:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.admin-nav-link--active {
+  background: var(--green-light);
+  color: var(--green-dark);
   font-weight: 600;
-  background: var(--green);
-  color: white;
 }
 
 .stats-row {
@@ -408,22 +424,10 @@ thead th.sort-desc {
   width: 100%;
   max-width: 1200px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
   flex-wrap: wrap;
   gap: 12px;
-}
-
-.report-header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.report-header-left h1 {
-  font-size: 1.4rem;
-  margin: 0;
 }
 
 .range-buttons {
@@ -562,6 +566,85 @@ thead th.sort-desc {
   color: var(--text-muted);
   white-space: nowrap;
 }
+
+/* ── Settings page ── */
+.settings-page {
+  width: 100%;
+  max-width: 560px;
+}
+
+.settings-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.settings-card-header {
+  padding: 20px 24px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-card-header h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.settings-card-header p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+.settings-field {
+  padding: 20px 24px;
+}
+
+.settings-field label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.settings-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.settings-input-row input {
+  width: 100px;
+  margin-bottom: 0;
+  padding: 10px 14px;
+  font-size: 1rem;
+}
+
+.settings-unit {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.settings-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.settings-actions button {
+  width: auto;
+  padding: 12px 28px;
+}
+
+.save-status {
+  font-size: 0.9rem;
+}
+
+.save-status--ok    { color: var(--green); }
+.save-status--error { color: var(--red); }
 
 /* ── Theme toggle ── */
 .theme-toggle {
