@@ -18,6 +18,17 @@ async function init() {
   `);
   await pool.query(`ALTER TABLE scans ADD COLUMN IF NOT EXISTS department TEXT`);
   await pool.query(`ALTER TABLE scans ADD COLUMN IF NOT EXISTS unit TEXT`);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS settings (
+      key   TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    )
+  `);
+  await pool.query(`
+    INSERT INTO settings (key, value) VALUES ('daily_target', '8')
+    ON CONFLICT (key) DO NOTHING
+  `);
 }
 
 module.exports = {
@@ -108,6 +119,19 @@ module.exports = {
       [days]
     );
     return rows;
+  },
+
+  async getSetting(key, fallback = null) {
+    const { rows } = await pool.query('SELECT value FROM settings WHERE key = $1', [key]);
+    return rows.length ? rows[0].value : fallback;
+  },
+
+  async setSetting(key, value) {
+    await pool.query(
+      `INSERT INTO settings (key, value) VALUES ($1, $2)
+       ON CONFLICT (key) DO UPDATE SET value = $2`,
+      [key, String(value)]
+    );
   },
 
   async getExportScans(days) {

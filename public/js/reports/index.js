@@ -1,5 +1,6 @@
 // ── Shared state ─────────────────────────────────────────────────────────────
 let activeDays = 1;
+let dailyTarget = 8;
 let trendChart, deptChart;
 
 // ── Shared helpers ────────────────────────────────────────────────────────────
@@ -63,6 +64,10 @@ document.getElementById('exportBtn').addEventListener('click', e => {
 
 // ── Load all ──────────────────────────────────────────────────────────────────
 async function loadAll() {
+  const settingsRes = await fetch('/api/settings');
+  const settings = await settingsRes.json();
+  dailyTarget = settings.daily_target;
+
   await Promise.all([loadTrend(), loadDept(), loadHeatmap(), loadPersonTable()]);
 }
 

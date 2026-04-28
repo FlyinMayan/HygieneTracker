@@ -214,6 +214,19 @@ app.get('/api/stats', async (req, res) => {
   res.json(await db.getStats());
 });
 
+// ── Settings API ─────────────────────────────────────────────────────────────
+app.get('/api/settings', async (req, res) => {
+  const dailyTarget = await db.getSetting('daily_target', '8');
+  res.json({ daily_target: parseInt(dailyTarget) });
+});
+
+app.post('/api/settings', async (req, res) => {
+  const val = parseInt(req.body.daily_target);
+  if (!val || val < 1 || val > 100) return res.status(400).json({ error: 'Invalid target' });
+  await db.setSetting('daily_target', val);
+  res.json({ ok: true });
+});
+
 // ── Reports API ─────────────────────────────────────────────────────────────
 function parseDays(query) {
   const d = parseInt(query.days);
