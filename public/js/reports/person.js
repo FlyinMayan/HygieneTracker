@@ -15,7 +15,7 @@ async function loadPersonTable() {
   const withCompliance = data.map(p => ({
     ...p,
     compliance: Math.min(100, Math.round((p.count / expected) * 100))
-  })).sort((a, b) => a.compliance - b.compliance); // worst first
+  })).sort((a, b) => b.count - a.count); // most scans first
 
   const avgCompliance = Math.round(
     withCompliance.reduce((s, p) => s + p.compliance, 0) / withCompliance.length
