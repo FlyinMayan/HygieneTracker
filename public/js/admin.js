@@ -1,3 +1,26 @@
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+const sidebar        = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const hamburger      = document.getElementById('hamburger');
+
+function openSidebar() {
+  sidebar.classList.add('open');
+  sidebarOverlay.classList.add('open');
+}
+
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  sidebarOverlay.classList.remove('open');
+}
+
+hamburger.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+sidebarOverlay.addEventListener('click', closeSidebar);
+
+// Close sidebar on nav link click (mobile)
+document.querySelectorAll('.sidebar-link[href]').forEach(a => {
+  a.addEventListener('click', closeSidebar);
+});
+
 // ── Settings modal ───────────────────────────────────────────────────────────
 async function openSettings() {
   const res = await fetch('/api/settings');
@@ -10,7 +33,7 @@ function closeSettings() {
   document.getElementById('settingsModal').classList.remove('open');
 }
 
-document.getElementById('settingsBtn').addEventListener('click', openSettings);
+document.getElementById('sidebarSettingsBtn').addEventListener('click', () => { closeSidebar(); openSettings(); });
 document.getElementById('cancelSettings').addEventListener('click', closeSettings);
 document.getElementById('settingsModal').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeSettings();

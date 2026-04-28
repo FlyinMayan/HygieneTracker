@@ -7,17 +7,95 @@
   <link rel="stylesheet" href="/style.css">
   <script>if (localStorage.getItem('theme') === 'dark') document.documentElement.setAttribute('data-theme','dark');</script>
 </head>
-<body>
-  <div class="admin-header">
-    <h1>🏥 HygieneTrack Dashboard</h1>
-    <div class="actions">
-      <a href="/reports.html">Reports</a>
-      <a href="/qr-generator">+ Generate QR</a>
-      <button class="theme-toggle" id="settingsBtn" title="Settings">⚙️</button>
-      <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">🌙</button>
-    </div>
-  </div>
+<body class="admin-body">
 
+  <!-- Sidebar backdrop -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-brand">🏥 HygieneTrack</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin.html" class="sidebar-link sidebar-link--active">
+        <span class="sidebar-icon">
+          <span></span><span></span><span></span>
+        </span>
+        Dashboard
+      </a>
+      <a href="/reports.html" class="sidebar-link">
+        <span class="sidebar-icon">
+          <span></span><span></span><span></span>
+        </span>
+        Reports
+      </a>
+      <a href="/qr-generator" class="sidebar-link">
+        <span class="sidebar-icon">
+          <span></span><span></span><span></span>
+        </span>
+        QR Generator
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="sidebar-link" id="sidebarSettingsBtn">
+        <span class="sidebar-icon">
+          <span></span><span></span><span></span>
+        </span>
+        Settings
+      </button>
+      <button class="sidebar-link" id="themeToggle">
+        <span class="sidebar-icon theme-icon">🌙</span>
+        Dark Mode
+      </button>
+    </div>
+  </aside>
+
+  <!-- Top bar -->
+  <header class="admin-topbar">
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <span class="topbar-title">Dashboard</span>
+  </header>
+
+  <!-- Main content -->
+  <main class="admin-main">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="todayCount">—</div>
+        <div class="stat-label">Scans Today</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalCount">—</div>
+        <div class="stat-label">Total Scans</div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-toolbar">
+        <input type="text" id="filterInput" placeholder="Filter by name, department, unit, or location…">
+        <span class="result-count" id="resultCount"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th class="sortable" data-col="user_name">Name <span class="sort-icon"></span></th>
+            <th class="sortable" data-col="department">Department <span class="sort-icon"></span></th>
+            <th class="sortable" data-col="unit">Unit <span class="sort-icon"></span></th>
+            <th class="sortable" data-col="location">Location <span class="sort-icon"></span></th>
+            <th class="sortable" data-col="scanned_at">Date &amp; Time <span class="sort-icon"></span></th>
+          </tr>
+        </thead>
+        <tbody id="scanTableBody">
+          <tr><td colspan="5" class="empty-state">Loading…</td></tr>
+        </tbody>
+      </table>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </main>
+
+  <!-- Settings modal -->
   <div class="modal-overlay" id="settingsModal">
     <div class="modal">
       <h2>Settings</h2>
@@ -30,39 +108,6 @@
         <button type="button" id="saveSettings">Save</button>
       </div>
     </div>
-  </div>
-
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-value" id="todayCount">—</div>
-      <div class="stat-label">Scans Today</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="totalCount">—</div>
-      <div class="stat-label">Total Scans</div>
-    </div>
-  </div>
-
-  <div class="table-card">
-    <div class="table-toolbar">
-      <input type="text" id="filterInput" placeholder="Filter by name, department, unit, or location…">
-      <span class="result-count" id="resultCount"></span>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th class="sortable" data-col="user_name">Name <span class="sort-icon"></span></th>
-          <th class="sortable" data-col="department">Department <span class="sort-icon"></span></th>
-          <th class="sortable" data-col="unit">Unit <span class="sort-icon"></span></th>
-          <th class="sortable" data-col="location">Location <span class="sort-icon"></span></th>
-          <th class="sortable" data-col="scanned_at">Date &amp; Time <span class="sort-icon"></span></th>
-        </tr>
-      </thead>
-      <tbody id="scanTableBody">
-        <tr><td colspan="5" class="empty-state">Loading…</td></tr>
-      </tbody>
-    </table>
-    <div class="pagination" id="pagination"></div>
   </div>
 
   <script src="/js/admin.js" defer></script>
