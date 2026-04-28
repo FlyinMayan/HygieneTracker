@@ -540,15 +540,21 @@ thead th.sort-desc {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-width: 120px;
+}
+
+.bar-track {
+  width: 140px;
+  flex-shrink: 0;
+  height: 8px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
 }
 
 .bar-fill {
-  height: 8px;
+  height: 100%;
   background: var(--green);
   border-radius: 99px;
-  min-width: 2px;
-  flex-shrink: 0;
 }
 
 .bar-label {
@@ -556,6 +562,68 @@ thead th.sort-desc {
   color: var(--text-muted);
   white-space: nowrap;
 }
+
+/* ── Theme toggle ── */
+.theme-toggle {
+  width: auto;
+  padding: 7px 10px;
+  font-size: 1rem;
+  background: white;
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  line-height: 1;
+}
+
+.theme-toggle:hover { background: var(--bg); }
+
+.report-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Dark mode ── */
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --border: #334155;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --green-light: #064e3b;
+  --green-dark: #34d399;
+}
+
+[data-theme="dark"] body { color: var(--text); }
+
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .table-card,
+[data-theme="dark"] .report-card,
+[data-theme="dark"] .admin-header .actions a,
+[data-theme="dark"] button.range-btn,
+[data-theme="dark"] button.theme-toggle { background: var(--card); color: var(--text); }
+
+[data-theme="dark"] thead th { background: #111827; color: var(--text-muted); }
+
+[data-theme="dark"] tbody tr:hover td { background: #263548; }
+
+[data-theme="dark"] input[type="text"] {
+  background: var(--card);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] input[type="text"]::placeholder { color: var(--text-muted); }
+
+[data-theme="dark"] .nav-link,
+[data-theme="dark"] .stat-label,
+[data-theme="dark"] .result-count,
+[data-theme="dark"] .page-info { color: var(--text-muted); }
+
+[data-theme="dark"] .admin-header .actions a { border: 1.5px solid var(--border); color: var(--text); }
+
+[data-theme="dark"] .range-btn.active { background: var(--green); color: white; border-color: var(--green); }
 
 @media (max-width: 700px) {
   .report-two-col { grid-template-columns: 1fr; }

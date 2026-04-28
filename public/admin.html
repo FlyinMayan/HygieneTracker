@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard — HygieneTrack</title>
   <link rel="stylesheet" href="/style.css">
+  <script>
+    if (localStorage.getItem('theme') === 'dark') document.documentElement.setAttribute('data-theme','dark');
+  </script>
 </head>
 <body>
   <div class="admin-header">
@@ -12,7 +15,19 @@
     <div class="actions">
       <a href="/reports.html">Reports</a>
       <a href="/qr-generator">+ Generate QR</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">🌙</button>
     </div>
+    <script>
+      const t = document.getElementById('themeToggle');
+      function syncToggle() { t.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙'; }
+      t.addEventListener('click', () => {
+        const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
+        localStorage.setItem('theme', dark ? 'light' : 'dark');
+        syncToggle();
+      });
+      syncToggle();
+    </script>
   </div>
 
   <div class="stats-row">
