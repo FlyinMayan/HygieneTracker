@@ -214,6 +214,44 @@ app.get('/api/stats', async (req, res) => {
   res.json(await db.getStats());
 });
 
+// ── Reports API ─────────────────────────────────────────────────────────────
+function parseDays(query) {
+  const d = parseInt(query.days);
+  return (!d || d < 1 || d > 365) ? 30 : d;
+}
+
+app.get('/api/reports/trend', async (req, res) => {
+  res.json(await db.getReportTrend(parseDays(req.query)));
+});
+
+app.get('/api/reports/by-department', async (req, res) => {
+  res.json(await db.getReportByDepartment(parseDays(req.query)));
+});
+
+app.get('/api/reports/by-person', async (req, res) => {
+  res.json(await db.getReportByPerson(parseDays(req.query)));
+});
+
+app.get('/api/reports/heatmap', async (req, res) => {
+  res.json(await db.getReportHeatmap(parseDays(req.query)));
+});
+
+app.get('/api/reports/export', async (req, res) => {
+  const days = parseDays(req.query);
+  const rows = await db.getExportScans(days);
+  const header = ['Name', 'Department', 'Unit', 'Location', 'Date & Time'].join(',');
+  const body = rows.map(r => [
+    `"${(r.user_name  || '').replace(/"/g, '""')}"`,
+    `"${(r.department || '').replace(/"/g, '""')}"`,
+    `"${(r.unit       || '').replace(/"/g, '""')}"`,
+    `"${(r.location   || '').replace(/"/g, '""')}"`,
+    `"${new Date(r.scanned_at).toLocaleString('en-US')}"`,
+  ].join(',')).join('\n');
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', `attachment; filename="hygiene-${days}d.csv"`);
+  res.send(`${header}\n${body}`);
+});
+
 // ── API: generate QR data URL ────────────────────────────────────────────────
 app.get('/api/qr', async (req, res) => {
   const location = req.query.location;
