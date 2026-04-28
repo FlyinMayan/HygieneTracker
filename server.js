@@ -40,7 +40,7 @@ function htmlShell(title, body, extraHead = '') {
 app.get('/', (req, res) => res.redirect('/admin.html'));
 
 // ── Scan endpoint — QR code lands here ──────────────────────────────────────
-app.get('/scan', (req, res) => {
+app.get('/scan', async (req, res) => {
   const location = req.query.location;
 
   if (!location) {
@@ -60,7 +60,7 @@ app.get('/scan', (req, res) => {
     return res.redirect(`/register?redirect=${encodeURIComponent(redirectUrl)}`);
   }
 
-  db.recordScan(userName, location);
+  await db.recordScan(userName, location);
 
   const now = new Date().toLocaleString('en-US', {
     dateStyle: 'medium',
@@ -180,12 +180,12 @@ app.get('/qr-generator', (req, res) => {
 });
 
 // ── API: all scans ───────────────────────────────────────────────────────────
-app.get('/api/scans', (req, res) => {
-  res.json(db.getScans());
+app.get('/api/scans', async (req, res) => {
+  res.json(await db.getScans());
 });
 
-app.get('/api/stats', (req, res) => {
-  res.json(db.getStats());
+app.get('/api/stats', async (req, res) => {
+  res.json(await db.getStats());
 });
 
 // ── API: generate QR data URL ────────────────────────────────────────────────
@@ -199,9 +199,14 @@ app.get('/api/qr', async (req, res) => {
   res.json({ url, qrDataUrl });
 });
 
-app.listen(PORT, () => {
-  console.log(`\nHygieneTrack running at http://localhost:${PORT}`);
-  console.log(`  Scan example:    http://localhost:${PORT}/scan?location=ICU+Room+204`);
-  console.log(`  Admin dashboard: http://localhost:${PORT}/admin.html`);
-  console.log(`  QR generator:    http://localhost:${PORT}/qr-generator\n`);
+db.init().then(() => {
+  app.listen(PORT, () => {
+    console.log(`\nHygieneTrack running at http://localhost:${PORT}`);
+    console.log(`  Scan example:    http://localhost:${PORT}/scan?location=ICU+Room+204`);
+    console.log(`  Admin dashboard: http://localhost:${PORT}/admin.html`);
+    console.log(`  QR generator:    http://localhost:${PORT}/qr-generator\n`);
+  });
+}).catch(err => {
+  console.error('Failed to connect to database:', err.message);
+  process.exit(1);
 });

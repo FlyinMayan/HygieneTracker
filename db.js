@@ -1,32 +1,47 @@
-const { DatabaseSync } = require('node:sqlite');
-const path = require('path');
+const { Pool } = require('pg');
 
-const db = new DatabaseSync(path.join(__dirname, 'scans.db'));
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS scans (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_name TEXT NOT NULL,
-    location TEXT NOT NULL,
-    scanned_at DATETIME DEFAULT (datetime('now'))
-  )
-`);
+async function init() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS scans (
+      id         SERIAL PRIMARY KEY,
+      user_name  TEXT NOT NULL,
+      location   TEXT NOT NULL,
+      scanned_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+}
 
 module.exports = {
-  recordScan(userName, location) {
-    return db.prepare('INSERT INTO scans (user_name, location) VALUES (?, ?)').run(userName, location);
+  init,
+
+  async recordScan(userName, location) {
+    await pool.query(
+      'INSERT INTO scans (user_name, location) VALUES ($1, $2)',
+      [userName, location]
+    );
   },
 
-  getScans({ limit = 500 } = {}) {
-    return db.prepare('SELECT * FROM scans ORDER BY scanned_at DESC LIMIT ?').all(limit);
+  async getScans({ limit = 500 } = {}) {
+    const { rows } = await pool.query(
+      'SELECT * FROM scans ORDER BY scanned_at DESC LIMIT $1',
+      [limit]
+    );
+    return rows;
   },
 
-  getStats() {
-    const total = db.prepare('SELECT COUNT(*) as count FROM scans').get();
-    const today = db.prepare(`
-      SELECT COUNT(*) as count FROM scans
-      WHERE date(scanned_at) = date('now')
-    `).get();
-    return { total: total.count, today: today.count };
+  async getStats() {
+    const [total, today] = await Promise.all([
+      pool.query('SELECT COUNT(*) AS count FROM scans'),
+      pool.query('SELECT COUNT(*) AS count FROM scans WHERE scanned_at::date = CURRENT_DATE')
+    ]);
+    return {
+      total: parseInt(total.rows[0].count),
+      today: parseInt(today.rows[0].count)
+    };
   }
 };
