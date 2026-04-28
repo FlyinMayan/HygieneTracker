@@ -24,6 +24,15 @@ module.exports = {
   init,
 
   async recordScan(userName, location, department, unit) {
+    const recent = await pool.query(
+      `SELECT 1 FROM scans
+       WHERE user_name = $1 AND location = $2
+       AND scanned_at > NOW() - INTERVAL '60 seconds'
+       LIMIT 1`,
+      [userName, location]
+    );
+    if (recent.rows.length > 0) return;
+
     await pool.query(
       'INSERT INTO scans (user_name, location, department, unit) VALUES ($1, $2, $3, $4)',
       [userName, location, department || null, unit || null]
