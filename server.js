@@ -36,6 +36,9 @@ function htmlShell(title, body, extraHead = '') {
 </html>`;
 }
 
+// ── Root redirect ───────────────────────────────────────────────────────────
+app.get('/', (req, res) => res.redirect('/admin.html'));
+
 // ── Scan endpoint — QR code lands here ──────────────────────────────────────
 app.get('/scan', (req, res) => {
   const location = req.query.location;
