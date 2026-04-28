@@ -151,5 +151,27 @@ async function loadData() {
   render();
 }
 
+async function loadCompliance() {
+  const [settingsRes, peopleRes] = await Promise.all([
+    fetch('/api/settings'),
+    fetch('/api/reports/by-person?days=30')
+  ]);
+  const { daily_target } = await settingsRes.json();
+  const people = await peopleRes.json();
+
+  const el = document.getElementById('complianceValue');
+  if (!people.length) { el.textContent = '—'; return; }
+
+  const expected = daily_target * 30;
+  const avg = Math.round(
+    people.reduce((s, p) => s + Math.min(100, (p.count / expected) * 100), 0) / people.length
+  );
+
+  el.textContent = `${avg}%`;
+  el.style.color = avg >= 80 ? 'var(--green)' : avg >= 50 ? '#d97706' : 'var(--red)';
+}
+
 loadData();
+loadCompliance();
 setInterval(loadData, 30000);
+setInterval(loadCompliance, 30000);
