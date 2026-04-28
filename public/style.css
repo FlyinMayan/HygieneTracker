@@ -670,6 +670,20 @@ thead th.sort-desc {
 .save-status--ok    { color: var(--green); }
 .save-status--error { color: var(--red); }
 
+.btn-link {
+  display: inline-block;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--green-dark);
+  padding: 10px 16px;
+  border: 1.5px solid var(--green);
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.btn-link:hover { background: var(--green-light); }
+
 /* ── Theme toggle ── */
 .theme-toggle {
   width: auto;
