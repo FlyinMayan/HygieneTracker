@@ -11,18 +11,22 @@ async function init() {
       id         SERIAL PRIMARY KEY,
       user_name  TEXT NOT NULL,
       location   TEXT NOT NULL,
+      department TEXT,
+      unit       TEXT,
       scanned_at TIMESTAMPTZ DEFAULT NOW()
     )
   `);
+  await pool.query(`ALTER TABLE scans ADD COLUMN IF NOT EXISTS department TEXT`);
+  await pool.query(`ALTER TABLE scans ADD COLUMN IF NOT EXISTS unit TEXT`);
 }
 
 module.exports = {
   init,
 
-  async recordScan(userName, location) {
+  async recordScan(userName, location, department, unit) {
     await pool.query(
-      'INSERT INTO scans (user_name, location) VALUES ($1, $2)',
-      [userName, location]
+      'INSERT INTO scans (user_name, location, department, unit) VALUES ($1, $2, $3, $4)',
+      [userName, location, department || null, unit || null]
     );
   },
 

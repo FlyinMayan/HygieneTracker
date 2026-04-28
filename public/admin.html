@@ -27,13 +27,15 @@
 
   <div class="table-card">
     <div class="table-toolbar">
-      <input type="text" id="filterInput" placeholder="Filter by name or location…" oninput="applyFilter()">
+      <input type="text" id="filterInput" placeholder="Filter by name, department, unit, or location…" oninput="applyFilter()">
     </div>
     <table>
       <thead>
         <tr>
           <th>#</th>
           <th>Name / Badge ID</th>
+          <th>Department</th>
+          <th>Unit</th>
           <th>Location</th>
           <th>Date &amp; Time</th>
         </tr>
@@ -63,13 +65,15 @@
     function renderTable(scans) {
       const tbody = document.getElementById('scanTableBody');
       if (!scans.length) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No scans recorded yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No scans recorded yet.</td></tr>';
         return;
       }
       tbody.innerHTML = scans.map((s, i) => `
         <tr>
           <td>${s.id}</td>
           <td>${escapeHtml(s.user_name)}</td>
+          <td>${escapeHtml(s.department || '—')}</td>
+          <td>${escapeHtml(s.unit || '—')}</td>
           <td>${escapeHtml(s.location)}</td>
           <td>${formatDate(s.scanned_at)}</td>
         </tr>
@@ -81,7 +85,9 @@
       if (!q) return renderTable(allScans);
       const filtered = allScans.filter(s =>
         s.user_name.toLowerCase().includes(q) ||
-        s.location.toLowerCase().includes(q)
+        s.location.toLowerCase().includes(q) ||
+        (s.department || '').toLowerCase().includes(q) ||
+        (s.unit || '').toLowerCase().includes(q)
       );
       renderTable(filtered);
     }

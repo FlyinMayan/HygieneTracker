@@ -60,7 +60,10 @@ app.get('/scan', async (req, res) => {
     return res.redirect(`/register?redirect=${encodeURIComponent(redirectUrl)}`);
   }
 
-  await db.recordScan(userName, location);
+  const department = req.cookies.department || '';
+  const unit = req.cookies.unit || '';
+
+  await db.recordScan(userName, location, department, unit);
 
   const now = new Date().toLocaleString('en-US', {
     dateStyle: 'medium',
@@ -69,6 +72,8 @@ app.get('/scan', async (req, res) => {
 
   const safeUser = escapeHtml(userName);
   const safeLoc = escapeHtml(location);
+  const safeDept = escapeHtml(department);
+  const safeUnit = escapeHtml(unit);
   const changeUrl = escapeHtml(`/register?redirect=${encodeURIComponent(`/scan?location=${encodeURIComponent(location)}`)}`);
 
   res.send(htmlShell('Scan Recorded', `
@@ -80,6 +85,14 @@ app.get('/scan', async (req, res) => {
           <span class="label">Who</span>
           <span class="value">${safeUser}</span>
         </div>
+        ${safeDept ? `<div class="detail-row">
+          <span class="label">Department</span>
+          <span class="value">${safeDept}</span>
+        </div>` : ''}
+        ${safeUnit ? `<div class="detail-row">
+          <span class="label">Unit</span>
+          <span class="value">${safeUnit}</span>
+        </div>` : ''}
         <div class="detail-row">
           <span class="label">Where</span>
           <span class="value">${safeLoc}</span>
@@ -89,7 +102,7 @@ app.get('/scan', async (req, res) => {
           <span class="value">${now}</span>
         </div>
       </div>
-      <a class="change-link" href="${changeUrl}">Not ${safeUser}? Update your name</a>
+      <a class="change-link" href="${changeUrl}">Not ${safeUser}? Update your info</a>
     </div>
   `));
 });
@@ -103,7 +116,7 @@ app.get('/register', (req, res) => {
     <div class="card">
       <div class="icon neutral">👤</div>
       <h1>Who are you?</h1>
-      <p>Enter your name or badge ID. It will be remembered on this device.</p>
+      <p>This will be remembered on your device for future scans.</p>
       <form method="POST" action="/register">
         <input type="hidden" name="redirect" value="${safeRedirect}">
         <input
@@ -115,6 +128,18 @@ app.get('/register', (req, res) => {
           autocomplete="name"
           maxlength="100"
         >
+        <input
+          type="text"
+          name="department"
+          placeholder="Department (e.g. ICU, ER, Surgery)"
+          maxlength="100"
+        >
+        <input
+          type="text"
+          name="unit"
+          placeholder="Unit (e.g. 4 North, PICU)"
+          maxlength="100"
+        >
         <button type="submit">Save &amp; Continue →</button>
       </form>
     </div>
@@ -123,17 +148,18 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
   const name = (req.body.name || '').trim().slice(0, 100);
+  const department = (req.body.department || '').trim().slice(0, 100);
+  const unit = (req.body.unit || '').trim().slice(0, 100);
   const redirect = req.body.redirect || '/';
 
   if (!name) {
     return res.redirect(`/register?redirect=${encodeURIComponent(redirect)}`);
   }
 
-  res.cookie('userName', name, {
-    maxAge: 365 * 24 * 60 * 60 * 1000,
-    httpOnly: false,
-    sameSite: 'lax'
-  });
+  const cookieOpts = { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: false, sameSite: 'lax' };
+  res.cookie('userName', name, cookieOpts);
+  res.cookie('department', department, cookieOpts);
+  res.cookie('unit', unit, cookieOpts);
   res.redirect(redirect);
 });
 
